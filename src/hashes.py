@@ -3,7 +3,7 @@ import hashlib
 n = 1
 key = b'my_value'
 key2 = 'string'.encode()
-key3=b'lunchtime'
+key3 = b'lunchtime'
 
 for i in range(n):
     print(hash(key))
