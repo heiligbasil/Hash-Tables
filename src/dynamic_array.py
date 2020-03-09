@@ -13,7 +13,6 @@ class DynamicArray:
         # make sure we have open space
         if self.count >= self.capacity:
             self.double_size()
-            return
 
         # make sure index is in range
         if index > self.count:
@@ -29,15 +28,15 @@ class DynamicArray:
         self.storage[index] = value
         self.count += 1
 
-    def append(self,value):
-        self.insert(self.count,value)
+    def append(self, value):
+        self.insert(self.count, value)
 
     def double_size(self):
-        self.capacity*=2
-        new_storage = [None]*self.capacity
+        self.capacity *= 2
+        new_storage = [None] * self.capacity
         for i in range(self.count):
-            new_storage[i]=self.storage[i]
-        self.storage=new_storage
+            new_storage[i] = self.storage[i]
+        self.storage = new_storage
 
 
 my_array = DynamicArray(4)
@@ -47,6 +46,6 @@ my_array.insert(1, 3)
 my_array.insert(3, 4)
 my_array.insert(0, 5)
 my_array.append(20)
-print(my_array.storage) # [0, 3, 1, 4]
+print(my_array.storage)  # [0, 3, 1, 4]
 
-# After adding douuble capacity: [5, 2, 3, 1, 4, 20, None, None]
+# After adding double capacity: [5, 2, 3, 1, 4, 20, None, None]
