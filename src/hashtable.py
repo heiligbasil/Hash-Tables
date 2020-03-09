@@ -32,19 +32,55 @@ class HashTable:
 
     def insert(self, key, value):
         """Store the value with the given key. Hash collisions should be handled with: Linked List chaining"""
-        pass
+        index = self._hash_mod(key)
+        if self.storage[index] is None:
+            self.storage[index] = LinkedPair(key, value)
+        else:
+            last_node = self.storage[index]
+            while last_node.next is not None:
+                if last_node.key == key:
+                    last_node.value = value
+                    return
+                last_node = last_node.next
+            last_node.next = LinkedPair(key, value)
 
     def remove(self, key):
         """Remove the value stored with the given key. Print a warning if the key is not found"""
-        pass
+        index = self._hash_mod(key)
+        value = self.storage[index]
+        if value is not None:
+            node = self.storage[index]
+            while node is not None:
+                if node.key == key:
+                    node = node.next
+        print(f'An element with key {key} cannot be found!')
 
     def retrieve(self, key):
         """Retrieve the value stored with the given key. Return None if the key is not found"""
-        pass
+        index = self._hash_mod(key)
+        value = self.storage[index]
+        if value is not None:
+            node = self.storage[index]
+            while node is not None:
+                if node.key == key:
+                    return node.value
+                node = node.next
+        return None
 
     def resize(self):
         """Doubles the capacity of the hash table and rehash all key/value pairs"""
-        pass
+        self.capacity *= 2
+        temp_storage = [None] * self.capacity
+        for i in range(len(self.storage)):
+            node = self.storage[i]
+            while node is not None:
+                index = self._hash_mod(node.key)
+                node_to_add = temp_storage[index]
+                if node_to_add is not None:
+                    while node_to_add.next is not None:
+                        node_to_add = node_to_add.next
+                temp_storage[index] = LinkedPair(node.key, node.value)
+        self.storage = temp_storage
 
 
 if __name__ == "__main__":
