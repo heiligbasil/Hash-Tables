@@ -33,12 +33,12 @@ class HashTable:
     def insert(self, key, value):
         """Store the value with the given key. Hash collisions should be handled with: Linked List chaining"""
         index = self._hash_mod(key)
-        if self.storage[index] is None:
+        node = self.storage[index]
+        if node is None:
             self.storage[index] = LinkedPair(key, value)
-        elif self.storage[index].key == key:
-            self.storage[index].value = value
+        elif node.key == key:
+            node.value = value
         else:
-            node = self.storage[index]
             while node.next is not None:
                 node = node.next
                 if node.key == key:
@@ -49,24 +49,31 @@ class HashTable:
     def remove(self, key):
         """Remove the value stored with the given key. Print a warning if the key is not found"""
         index = self._hash_mod(key)
-        value = self.storage[index]
-        if value is not None:
-            node = self.storage[index]
-            while node is not None:
+        node = self.storage[index]
+        node_before = None
+        if node:
+            while node:
                 if node.key == key:
-                    node = node.next
-        print(f'An element with key {key} cannot be found!')
+                    if node_before:
+                        node_before = node.next
+                    elif node.next:
+                        node = node.next
+                    else:
+                        node = None
+                    return
+                node_before = node
+                node = node.next  # if node_before:  #     node_before.next = node_before.next.next  # else:  #     node = None
+
+        print(f"An element with key '{key}' cannot be found!")
 
     def retrieve(self, key):
         """Retrieve the value stored with the given key. Return None if the key is not found"""
         index = self._hash_mod(key)
-        value = self.storage[index]
-        if value is not None:
-            node = self.storage[index]
-            while node is not None:
-                if node.key == key:
-                    return node.value
-                node = node.next
+        node = self.storage[index]
+        while node is not None:
+            if node.key == key:
+                return node.value
+            node = node.next
         return None
 
     def resize(self):
@@ -78,11 +85,17 @@ class HashTable:
             while node is not None:
                 index = self._hash_mod(node.key)
                 node_to_add = temp_storage[index]
-                if node_to_add is not None:
-                    while node_to_add.next is not None:
+                if node_to_add is None:
+                    temp_storage[index] = LinkedPair(node.key, node.value)
+                else:
+                    while node_to_add is not None:
+                        if node_to_add.next is None:
+                            node_to_add.next = LinkedPair(node.key, node.value)
+                            break
                         node_to_add = node_to_add.next
-                temp_storage[index] = LinkedPair(node.key, node.value)
+                node = node.next
         self.storage = temp_storage
+        return
 
 
 if __name__ == "__main__":
