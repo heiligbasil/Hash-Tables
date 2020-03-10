@@ -19,12 +19,16 @@ class HashTable:
     def _hash(self, key):
         """Hash an arbitrary key and return an integer"""
         # OPTIONAL STRETCH: You may replace the Python hash with DJB2 as a stretch goal
-        return hash(key)
+        # return hash(key)
+        return self._hash_djb2(key)
 
     def _hash_djb2(self, key):
         """Hash an arbitrary key using DJB2 hash"""
         # OPTIONAL STRETCH: Research and implement DJB2
-        pass
+        hash_grotto = 5381
+        for k in key:
+            hash_grotto = ((hash_grotto << 5) + hash_grotto) + ord(k)
+        return hash_grotto & 0xFFFFFFFF
 
     def _hash_mod(self, key):
         """Take an arbitrary key and return a valid integer index within the storage capacity of the hash table"""
@@ -46,6 +50,13 @@ class HashTable:
                     return
             node.next = LinkedPair(key, value)
 
+    # def insert_guided_lecture(self, key, value):
+    #     index = self._hash_mod(key)
+    #     if self.storage[index] is not None:
+    #         print("ERROR: Key in use")
+    #     else:
+    #         self.storage[index] = value
+
     def remove(self, key):
         """Remove the value stored with the given key. Print a warning if the key is not found"""
         index = self._hash_mod(key)
@@ -65,6 +76,13 @@ class HashTable:
                 node = node.next
         print(f"An element with key '{key}' cannot be found!")
 
+    # def remove_guided_lecture(self, key, value):
+    #     index = self._hash_mod(key)
+    #     if self.storage[index] is not None:
+    #         self.storage[index] = None
+    #     else:
+    #         print("WARNING: Key not found")
+
     def retrieve(self, key):
         """Retrieve the value stored with the given key. Return None if the key is not found"""
         index = self._hash_mod(key)
@@ -74,6 +92,10 @@ class HashTable:
                 return node.value
             node = node.next
         return None
+
+    # def retrieve_guided_lecture(self, key):
+    #     index = self._hash_mod(key)
+    #     return self.storage[index]
 
     def resize(self):
         """Doubles the capacity of the hash table and rehash all key/value pairs"""
@@ -96,6 +118,12 @@ class HashTable:
         self.storage = temp_storage
         return
 
+    # def resize_guided_lecture(self):
+    #     old_storage = self.storage.copy()
+    #     self.capacity *= 2
+    #     self.storage = [None] * self.capacity
+    #     for bucket_item in old_storage:
+    #         self.insert_guided_lecture("dummy", bucket_item)
 
 if __name__ == "__main__":
     ht = HashTable(1)
