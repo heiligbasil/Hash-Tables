@@ -15,6 +15,10 @@ class HashTable:
         """Constructor to create a new instance of this class with the starting size"""
         self.capacity = capacity  # Number of buckets in the hash table
         self.storage = [None] * capacity
+        self.key_count = 0
+
+    def _get_load_factor(self):
+        return self.key_count / self.capacity
 
     def _hash(self, key):
         """Hash an arbitrary key and return an integer"""
@@ -38,17 +42,19 @@ class HashTable:
         """Store the value with the given key. Hash collisions should be handled with: Linked List chaining"""
         index = self._hash_mod(key)
         node = self.storage[index]
-        if node is None:
+        if node is None:  # Empty bucket, so add the value here
             self.storage[index] = LinkedPair(key, value)
-        elif node.key == key:
+            self.key_count += 1
+        elif node.key == key:  # Replace bucket at head-level with new value
             node.value = value
-        else:
+        else:  # Try to find the key within the linked list chain
             while node.next is not None:
                 node = node.next
                 if node.key == key:
                     node.value = value
                     return
             node.next = LinkedPair(key, value)
+            self.key_count += 1  # load_factor = self._get_load_factor()  # if load_factor < 0.2 or load_factor > 0.8:  #     self.resize()
 
     # def insert_guided_lecture(self, key, value):
     #     index = self._hash_mod(key)
@@ -71,6 +77,7 @@ class HashTable:
                         self.storage[index] = node.next
                     else:
                         self.storage[index] = None
+                    self.key_count -= 1
                     return
                 node_before = node
                 node = node.next
@@ -99,7 +106,14 @@ class HashTable:
 
     def resize(self):
         """Doubles the capacity of the hash table and rehash all key/value pairs"""
-        self.capacity *= 2
+        load_factor = self._get_load_factor()
+        if load_factor < 0.2:
+            self.capacity //= 2
+        elif load_factor > 0.7:
+            self.capacity *= 2
+        else:
+            print(f'Resizing unnecessary due to a load factor of {load_factor}:.2f')
+            return
         temp_storage = [None] * self.capacity
         for i in range(len(self.storage)):
             node = self.storage[i]
@@ -116,7 +130,6 @@ class HashTable:
                         node_to_add = node_to_add.next
                 node = node.next
         self.storage = temp_storage
-        return
 
     # def resize_guided_lecture(self):
     #     old_storage = self.storage.copy()
@@ -125,8 +138,9 @@ class HashTable:
     #     for bucket_item in old_storage:
     #         self.insert_guided_lecture("dummy", bucket_item)
 
+
 if __name__ == "__main__":
-    ht = HashTable(1)
+    ht = HashTable(65)
 
     ht.insert("line_1", "Tiny hash table")
     ht.insert("line_2", "Filled beyond capacity")
