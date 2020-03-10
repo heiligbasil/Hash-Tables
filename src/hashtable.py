@@ -55,15 +55,14 @@ class HashTable:
             while node:
                 if node.key == key:
                     if node_before:
-                        node_before = node.next
+                        node_before.next = node.next
                     elif node.next:
-                        node = node.next
+                        self.storage[index] = node.next
                     else:
-                        node = None
+                        self.storage[index] = None
                     return
                 node_before = node
-                node = node.next  # if node_before:  #     node_before.next = node_before.next.next  # else:  #     node = None
-
+                node = node.next
         print(f"An element with key '{key}' cannot be found!")
 
     def retrieve(self, key):
