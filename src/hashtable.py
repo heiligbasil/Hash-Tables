@@ -35,14 +35,16 @@ class HashTable:
         index = self._hash_mod(key)
         if self.storage[index] is None:
             self.storage[index] = LinkedPair(key, value)
+        elif self.storage[index].key == key:
+            self.storage[index].value = value
         else:
-            last_node = self.storage[index]
-            while last_node.next is not None:
-                if last_node.key == key:
-                    last_node.value = value
+            node = self.storage[index]
+            while node.next is not None:
+                node = node.next
+                if node.key == key:
+                    node.value = value
                     return
-                last_node = last_node.next
-            last_node.next = LinkedPair(key, value)
+            node.next = LinkedPair(key, value)
 
     def remove(self, key):
         """Remove the value stored with the given key. Print a warning if the key is not found"""
@@ -84,7 +86,7 @@ class HashTable:
 
 
 if __name__ == "__main__":
-    ht = HashTable(2)
+    ht = HashTable(1)
 
     ht.insert("line_1", "Tiny hash table")
     ht.insert("line_2", "Filled beyond capacity")
